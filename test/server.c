@@ -31,6 +31,7 @@ int main()
 			read(client_fd,&ch,1);
 			printf("recv info from client:%c\n",ch);
 			close(client_fd);
+			exit(0);
 		}
 		else{
 			close(client_fd);
