@@ -1,6 +1,6 @@
 #include<netinet/in.h>
 #include "connect_func.h"
-
+#include "log_manage.h"
 
 int init_socket(const char* ip,const int port)
 {
@@ -12,7 +12,9 @@ int init_socket(const char* ip,const int port)
 
 	int ret=connect(sockfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr));
 	if(ret==-1){
-		perror("connect failed\n");
+		char buf[128];
+		sprintf(buf,"connect to %s:%d failed!",ip,port);
+		log_2_file(LOG_FILE,2,buf);
 		return -1;
 	}
 	
@@ -23,5 +25,4 @@ int close_socket(int socket_fd)
 {
 	return close(socket_fd);
 }
-
 
