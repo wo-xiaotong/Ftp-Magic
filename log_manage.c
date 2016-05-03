@@ -24,7 +24,7 @@ int log_file(const char* logfile,int level,char *msg)
 	return n;
 }
 
-int log_file_debug(const char* logfile,int level,int line,const char* file,const char* func, const char* msg)
+int log_file_debug(const char* logfile,int level,int line,const char* file,const char* msg)
 {
 	if(level>2 || level<0)
 		return -1;
@@ -34,7 +34,7 @@ int log_file_debug(const char* logfile,int level,int line,const char* file,const
 		return -1;
 	}
 	
-	int n=fprintf(fp,"%s: %s-%d-%s [%s]\n",log_level[level],file,line,func,msg);
+	int n=fprintf(fp,"%s: %s-%d [%s]\n",log_level[level],file,line,msg);
 	fclose(fp);
 
 	return n; 
@@ -45,12 +45,12 @@ int log_console(int level,const char* msg)
 	if(level>2 || level<0)
 		return -1;
 
-	int n=printf("%s: [%s]",log_level[level],msg);
+	int n=printf("%s: [%s]\n",log_level[level],msg);
 
 	return n;
 }
 
-int log_console_debug(int level,int line,const char* file,const char* func, const char* msg)
+int log_console_debug(int level,int line,const char* file,const char* msg)
 {
 	if(level>2 || level<0)
 		return -1;
@@ -60,7 +60,7 @@ int log_console_debug(int level,int line,const char* file,const char* func, cons
 		return -1;
 	}
 	
-	int n=printf("%s: %s-%d-%s [%s]\n",log_level[level],file,line,func,msg);
+	int n=printf("%s: %s-%d [%s]\n",log_level[level],file,line,msg);
 	fclose(fp);
 
 	return n; 
