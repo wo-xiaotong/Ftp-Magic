@@ -1,9 +1,13 @@
 #ifndef LOG_MANAGE_H
 #define LOG_MANAGE_H
 
-//#define LOG_FILE "login.log"
+#define LOG_FILE "login.log"
+#define LOG_DEBUG(msg) __LINE__,__FILE__,__FUNCTION__,msg
 
-int log_2_file(const char *file,const int level,const char* msg);
-int log_2_console(const int level,const char* msg);
+int log_file(const char* logfile,int level,char *msg);
+int log_file_debug(const char* logfile,int level,int line,const char* file,const char* func, const char* msg);
+int log_console_debug(int level,int line,const char* file,const char* func, const char* msg);
+int log_console(int level,const char* msg);
+
 
 #endif
