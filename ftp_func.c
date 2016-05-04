@@ -8,21 +8,21 @@ static char read_buf[READ_BUF_SIZE];
 static char write_buf[WRITE_BUF_SIZE];
 static user_state login_state=LOGOUT;
 
-int login_ftp(int control_fd,const char* user,const char* pass)
+int login_ftp(int ctrl_fd,const char* user,const char* pass)
 {
 	snprintf(write_buf,WRITE_BUF_SIZE,"USER %s\r\n",user);
-	write_socket(control_fd,write_buf);
-	read_socket(control_fd,read_buf,READ_BUF_SIZE);
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
 	if(strncmp(read_buf,LOGIN_NEED_PASS,3)!=0){
-		log_console_debug(0,LOG_DEBUG("login user error"));
+		log_console_debug(0,LOG_DEBUG(read_buf));
 		return -1;
 	}
 	
 	snprintf(write_buf,WRITE_BUF_SIZE,"PASS %s\r\n",pass);
-	write_socket(control_fd,write_buf);
-	read_socket(control_fd,read_buf,READ_BUF_SIZE);
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
 	if(strncmp(read_buf,LOGIN_RIGHT,3)!=0){
-		log_console_debug(0,LOG_DEBUG("login pass error"));
+		log_console_debug(0,LOG_DEBUG(read_buf));
 			return -1;
 	}
 
@@ -33,8 +33,8 @@ int login_ftp(int control_fd,const char* user,const char* pass)
 
 int connect_ftp(const char* ip,const int port)
 {
-	int control_fd=init_socket(ip,port);
-	if(control_fd==-1){
+	int sock_fd=init_socket(ip,port);
+	if(sock_fd==-1){
 		log_console_debug(0,LOG_DEBUG("init socket failed!"));
 		return -1;
 	}
@@ -48,24 +48,28 @@ int connect_ftp(const char* ip,const int port)
 	}
 	log_console(2,h_info->h_name);
 
-	read_socket(control_fd,read_buf,READ_BUF_SIZE);
+	read_socket(sock_fd,read_buf,READ_BUF_SIZE);
 	log_console(2,read_buf);
-	return control_fd;
+	return sock_fd;
 }
 
 
-int disconnect_ftp(const int control_fd)
+int disconnect_ftp(const int sock_fd)
 {
 	snprintf(write_buf,WRITE_BUF_SIZE,"QUIT\r\n");
-	write_socket(control_fd,write_buf);
-	read_socket(control_fd,read_buf,READ_BUF_SIZE);
+	write_socket(sock_fd,write_buf);
+	read_socket(sock_fd,read_buf,READ_BUF_SIZE);
 	if(strncmp(read_buf,QUIT_OK,3)!=0){
-		log_console_debug(0,LOG_DEBUG("Quit failed!"));
+		log_console_debug(0,LOG_DEBUG(read_buf));
 		return -1;
 	}
 
 	login_state=LOGOUT;
-	int n=close_socket(control_fd);
+	int n=close_socket(sock_fd);
+	if(n==-1){
+		log_console_debug(0,LOG_DEBUG("close socket failed!"));
+		return -1;
+	}
 	
 	log_console(2,"Quit Ok");
 	return 0;

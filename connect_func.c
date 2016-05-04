@@ -33,7 +33,6 @@ int read_socket(int sock_fd,char* read_buf,int read_size)
 		log_console_debug(0,LOG_DEBUG("read socket failed!"));
 		return -1;
 	}
-	if(n>2)n-=2;   //remove \r\n
 	read_buf[n]='\0';
 	return n;
 }
