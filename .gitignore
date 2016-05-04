@@ -28,6 +28,8 @@ bject files
 *.x86_64
 *.hex
 ftp_magic
+magic_ftp
+
 
 # Debug files
 *.dSYM/
