@@ -1,8 +1,8 @@
 CC=gcc
-CFLAGS=-g 
+CFLAGS=-g -O1 
 
 ftp_magic : ftp_main.o connect_func.o log_manage.o ftp_func.o
-	$(CC) $(CFLAGS) -o ftp_magic ftp_main.o connect_func.o log_manage.o ftp_func.o
+	$(CC) $(CFLAGS) -o magic_ftp ftp_main.o connect_func.o log_manage.o ftp_func.o
 
 ftp_func.o: ftp_func.c connect_func.h log_manage.h ftp_func.h
 	$(CC) $(CFLAGS) -c ftp_func.c

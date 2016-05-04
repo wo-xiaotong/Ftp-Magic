@@ -14,7 +14,7 @@ int init_socket(const char* ip,const int port)
 
 	int ret=connect(sockfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr));
 	if(ret==-1){
-		log_console_debug(0,LOG_DEBUG("connect ip/port failed!"));
+		log_console_v("ERROR:connect to %s:%d failed!",ip,port);
 		return -1;
 	}
 	
@@ -23,7 +23,12 @@ int init_socket(const char* ip,const int port)
 
 int close_socket(int sock_fd)
 {
-	return close(sock_fd);
+	int ret=close(sock_fd);
+	if(ret==-1){
+		log_console_v("ERROR:close %d socket fd dailed!",sock_fd);
+	}
+
+	return ret;
 }
 
 int read_socket(int sock_fd,char* read_buf,int read_size)
@@ -46,3 +51,4 @@ int write_socket(int sock_fd,char* write_buf)
 	
 	return n;
 }
+

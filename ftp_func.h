@@ -8,10 +8,15 @@
 #define LOGIN_NEED_PASS "331"
 #define LOGIN_RIGHT "230"
 #define QUIT_OK "221"
+#define PASV_OK "227"
 
-int login_ftp(int control_fd,const char* user,const char* pass);
-int connect_ftp(const char* ip,const int port);
-int disconnect_ftp(const int control_fd);
+int login_ftp(const char* ip,int port,const char* user,const char* pass);
+int logout_ftp(const int sock_fd);
+int query_login_state();
+
+int goto_PASV(const int ctrl_fd);
+int connect_data(const char* IP,int d_port);
+int close_data(const int data_fd);
 
 typedef enum state{
 	LOGIN,

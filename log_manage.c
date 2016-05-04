@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include<stdarg.h>
 #include"log_manage.h"
 
 char *log_level[3]={
@@ -66,5 +67,15 @@ int log_console_debug(int level,int line,const char* file,char* msg)
 	fclose(fp);
 
 	return n; 
+}
+
+int log_console_v(const char* format,...)
+{
+	va_list args;
+	va_start(args,format);
+	int n=vprintf(format,args);
+	va_end(args);
+
+	return n;
 }
 
