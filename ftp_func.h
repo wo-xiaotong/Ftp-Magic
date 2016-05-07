@@ -23,10 +23,13 @@ int connect_data(const char* IP,int d_port);
 int close_data(const int data_fd);
 
 int ftp_mkdir(const int ctrl_fd,const char* dir_name);
+int ftp_rmdir(const int ctrl_fd,const char* dir_name);
 int print_sysinfo(const int ctrl_fd);
+int print_working_dir(const int ctrl_fd);
 typedef enum state{
 	LOGOUT,
-	LOGIN
+	LOGIN,
+	PASV_MODE
 }user_state;
 
 #endif

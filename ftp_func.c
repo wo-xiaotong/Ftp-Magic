@@ -95,7 +95,8 @@ int goto_PASV(const int ctrl_fd)
 	}
 	char* p1=strtok(NULL," ,.()");
 	char* p2=strtok(NULL," ,.()");
-	
+
+	login_state=PASV_MODE;
 	return atoi(p1)*256+atoi(p2);
 }
 
@@ -154,6 +155,32 @@ int print_sysinfo(const int ctrl_fd)
 
 int ftp_mkdir(const int ctrl_fd,const char* dir_name)
 {
-	
+	snprintf(write_buf,WRITE_BUF_SIZE,"MKD %s\r\n",dir_name);
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
+
+	if(strncmp(read_buf,MKD_OK,3)!=0){
+		log_console_debug(0,LOG_DEBUG(read_buf));
+		return -1;
+	}
+
+	remove_reply_code(read_buf);
+	log_console(2,read_buf);
+	return 0;	
 }
 
+int ftp_rmdir(const int ctrl_fd,const char* dir_name)
+{
+	snprintf(write_buf,WRITE_BUF_SIZE,"RMD %s\r\n",dir_name);
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
+
+	if(strncmp(read_buf,RMD_OK,3)!=0){
+		log_console_debug(0,LOG_DEBUG(read_buf));
+		return -1;
+	}
+
+	remove_reply_code(read_buf);
+	log_console(2,read_buf);
+	return 0;	
+}
