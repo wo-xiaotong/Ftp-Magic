@@ -11,14 +11,14 @@ int main(int argc,const char* argv[])
 {
 
 	control_fd=login_ftp(IP,C_PORT,"ftpuser","ftptest");
-	
+	print_working_dir(control_fd);
+
 	int data_port=goto_PASV(control_fd);
-	printf("%d",data_port);
 	data_fd=connect_data(IP,data_port);
 	close_data(data_fd);
 
+	print_sysinfo(control_fd);
 	logout_ftp(control_fd);
-	printf("%d\n",query_login_state());
 	return 0;
 }
 

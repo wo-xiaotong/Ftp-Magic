@@ -12,7 +12,7 @@ char *log_level[3]={
 static inline void removeCRLF(char* msg)
 {
 	int n=strlen(msg);
-	if(n>2 && msg[n-1]=='\n' && msg[n-2]=='\r'){
+	if(n>=2 && msg[n-1]=='\n' && msg[n-2]=='\r'){
 		msg[n-2]='\0';
 	}
 }

@@ -1,6 +1,9 @@
-#include<netinet/in.h>
-#include<stdio.h>
-#include<string.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "connect_func.h"
 #include "log_manage.h"
 

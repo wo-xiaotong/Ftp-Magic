@@ -1,10 +1,14 @@
-#include<netdb.h>
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include"connect_func.h"
-#include"log_manage.h"
-#include"ftp_func.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include "connect_func.h"
+#include "log_manage.h"
+#include "ftp_func.h"
+#include "reply_deal.h"
 
 static char read_buf[READ_BUF_SIZE];
 static char write_buf[WRITE_BUF_SIZE];
@@ -116,4 +120,40 @@ int query_login_state()
 	return login_state;
 }
 
-int 
+int print_working_dir(const int ctrl_fd)
+{
+	snprintf(write_buf,WRITE_BUF_SIZE,"PWD\r\n");
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
+
+	if(strncmp(read_buf,PWD_OK,3)!=0){
+		log_console_debug(0,LOG_DEBUG(read_buf));
+		return -1;
+	}
+
+	remove_reply_code(read_buf);
+	log_console(2,read_buf);
+	return 0;
+}
+
+int print_sysinfo(const int ctrl_fd)
+{
+	snprintf(write_buf,WRITE_BUF_SIZE,"SYST\r\n");
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
+
+	if(strncmp(read_buf,SYST_OK,3)!=0){
+		log_console_debug(0,LOG_DEBUG(read_buf));
+		return -1;
+	}
+
+	remove_reply_code(read_buf);
+	log_console(2,read_buf);
+	return 0;
+}
+
+int ftp_mkdir(const int ctrl_fd,const char* dir_name)
+{
+	
+}
+
