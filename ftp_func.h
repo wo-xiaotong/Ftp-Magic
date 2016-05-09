@@ -2,8 +2,6 @@
 #define FTP_FUNC_H
 
 #include<stdio.h>
-#define READ_BUF_SIZE BUFSIZ
-#define WRITE_BUF_SIZE BUFSIZ
 
 #define LOGIN_NEED_PASS "331"
 #define LOGIN_RIGHT "230"
@@ -13,9 +11,13 @@
 #define MKD_OK "257"
 #define RMD_OK "250"
 #define SYST_OK "215"
-#define CWD_OK "215"
-#define CDUP_OK "215"
+#define CWD_OK "250"
+#define CDUP_OK "250"
 #define NOOP_OK "200"
+#define STAT_OK "213"
+
+#define READ_BUFSIZE BUFSIZE
+
 
 int ftp_login(const char* ip,int port,const char* user,const char* pass);
 int ftp_logout(const int sock_fd);

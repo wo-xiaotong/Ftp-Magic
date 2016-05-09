@@ -35,7 +35,7 @@ int log_file_debug(const char* logfile,int level,int line,const char* file,char*
 {
 	if(level>2 || level<0)return -1;
 
-	FILE *fp=fopen(file,"a");
+	FILE *fp=fopen(logfile,"a");
 	if(fp==NULL)return -1;
 	
 	removeCRLF(msg);
@@ -58,23 +58,24 @@ int log_console(int level,char* msg)
 int log_console_debug(int level,int line,const char* file,char* msg)
 {
 	if(level>2 || level<0)return -1;
-
-	FILE *fp=fopen(file,"a");
-	if(fp==NULL)return -1;
 	
 	removeCRLF(msg);
 	int n=printf("%s: %s-%d [%s]\n",log_level[level],file,line,msg);
-	fclose(fp);
 
 	return n; 
 }
 
-int log_console_v(const char* format,...)
+int log_console_v(int level,const char* format,...)
 {
+	if(level>2 || level<0)return -1;
+	printf("%s:",log_level[level]);
+
 	va_list args;
 	va_start(args,format);
 	int n=vprintf(format,args);
 	va_end(args);
+
+	printf("\n");
 
 	return n;
 }
