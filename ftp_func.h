@@ -13,19 +13,28 @@
 #define MKD_OK "257"
 #define RMD_OK "250"
 #define SYST_OK "215"
+#define CWD_OK "215"
+#define CDUP_OK "215"
+#define NOOP_OK "200"
 
-int login_ftp(const char* ip,int port,const char* user,const char* pass);
-int logout_ftp(const int sock_fd);
+int ftp_login(const char* ip,int port,const char* user,const char* pass);
+int ftp_logout(const int sock_fd);
+
 int query_login_state();
-
 int goto_PASV(const int ctrl_fd);
-int connect_data(const char* IP,int d_port);
-int close_data(const int data_fd);
+int open_data_connect(const char* IP,int d_port);
+int close_data_connect(const int data_fd);
 
 int ftp_mkdir(const int ctrl_fd,const char* dir_name);
 int ftp_rmdir(const int ctrl_fd,const char* dir_name);
+int ftp_cwd(const int ctrl_fd,const char* dir_name);
+int ftp_cdup(const int ctrl_fd,const char* dir_name);
+int ftp_noop(const int ctrl_fd);
+
 int print_sysinfo(const int ctrl_fd);
 int print_working_dir(const int ctrl_fd);
+
+
 typedef enum state{
 	LOGOUT,
 	LOGIN,

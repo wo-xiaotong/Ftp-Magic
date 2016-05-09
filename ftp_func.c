@@ -14,7 +14,7 @@ static char read_buf[READ_BUF_SIZE];
 static char write_buf[WRITE_BUF_SIZE];
 static user_state login_state=LOGOUT;
 
-int login_ftp(const char* ip,int c_port,const char* user,const char* pass)
+int ftp_login(const char* ip,int c_port,const char* user,const char* pass)
 {
 	int ctrl_fd=init_socket(ip,c_port);
 	if(ctrl_fd==-1)return -1;
@@ -53,7 +53,7 @@ int login_ftp(const char* ip,int c_port,const char* user,const char* pass)
 	return ctrl_fd;
 }
 
-int logout_ftp(const int ctrl_fd)
+int ftp_logout(const int ctrl_fd)
 {
 	snprintf(write_buf,WRITE_BUF_SIZE,"QUIT\r\n");
 	write_socket(ctrl_fd,write_buf);
@@ -100,7 +100,7 @@ int goto_PASV(const int ctrl_fd)
 	return atoi(p1)*256+atoi(p2);
 }
 
-int connect_data(const char* IP,int d_port)
+int open_data_connect(const char* IP,int d_port)
 {
 	int data_fd=init_socket(IP,d_port);
 	log_console(2,"open data socket ok!");
@@ -108,7 +108,7 @@ int connect_data(const char* IP,int d_port)
 	return data_fd;
 }
 
-int close_data(const int data_fd)
+int close_data_connect(const int data_fd)
 {
 	int ret=close_socket(data_fd);
 	log_console(2,"close data socket ok!");
@@ -183,4 +183,50 @@ int ftp_rmdir(const int ctrl_fd,const char* dir_name)
 	remove_reply_code(read_buf);
 	log_console(2,read_buf);
 	return 0;	
+}
+
+int ftp_cwd(const int ctrl_fd,const char* dir_name)
+{
+	snprintf(write_buf,WRITE_BUF_SIZE,"CWD %s\r\n",dir_name);
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
+
+	if(strncmp(read_buf,CWD_OK,3)!=0){
+		log_console_debug(0,LOG_DEBUG(read_buf));
+		return -1;
+	}
+
+	remove_reply_code(read_buf);
+	log_console(2,read_buf);
+	return 0;	
+}
+
+int ftp_cdup(const int ctrl_fd,const char* dir_name)
+{
+	snprintf(write_buf,WRITE_BUF_SIZE,"CDUP %s\r\n",dir_name);
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
+
+	if(strncmp(read_buf,CDUP_OK,3)!=0){
+		log_console_debug(0,LOG_DEBUG(read_buf));
+		return -1;
+	}
+
+	remove_reply_code(read_buf);
+	log_console(2,read_buf);
+	return 0;
+}
+
+int ftp_noop(const int ctrl_fd)
+{
+	snprintf(write_buf,WRITE_BUF_SIZE,"NOOP\r\n");
+	write_socket(ctrl_fd,write_buf);
+	read_socket(ctrl_fd,read_buf,READ_BUF_SIZE);
+
+	if(strncmp(read_buf,NOOP_OK,3)!=0){
+		log_console_debug(0,LOG_DEBUG(read_buf));
+		return -1;
+	}
+
+	return 0;
 }

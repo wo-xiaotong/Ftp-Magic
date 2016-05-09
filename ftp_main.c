@@ -10,7 +10,7 @@ int data_fd;
 int main(int argc,const char* argv[])
 {
 
-	control_fd=login_ftp(IP,C_PORT,"ftpuser","ftptest");
+	control_fd=ftp_login(IP,C_PORT,"ftpuser","ftptest");
 	print_working_dir(control_fd);
 
 /*	int data_port=goto_PASV(control_fd);
@@ -20,10 +20,16 @@ int main(int argc,const char* argv[])
 	
 	print_sysinfo(control_fd);
 	logout_ftp(control_fd);
-*/
 
-	//ftp_mkdir(control_fd,"hello");
-	ftp_rmdir(control_fd,"hello");
+
+	ftp_mkdir(control_fd,"hello");
+	ftp_cwd(control_fd,"hello");
+	ftp_cwd(control_fd,"he2dfsdllo");
+	ftp_cdup(control_fd,"hello");
+	ftp_cdup(control_fd,"hecscllo");
+	*/
+	
+	ftp_noop(control_fd);
 	return 0;
 }
 
