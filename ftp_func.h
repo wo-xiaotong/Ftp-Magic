@@ -15,31 +15,45 @@
 #define CDUP_OK "250"
 #define NOOP_OK "200"
 #define STAT_OK "213"
+#define SIZE_OK "213"
 
 #define READ_BUFSIZE BUFSIZ
 
 
 int ftp_login(const char* ip,int port,const char* user,const char* pass);
-int ftp_logout(const int sock_fd);
+int ftp_logout();
 
 int query_login_state();
-int goto_pasv_mode(const int ctrl_fd);
-int open_data_connect(const char* IP,int d_port);
-int close_data_connect(const int data_fd);
+int goto_pasv_mode();
+int open_data_connect();
+int close_data_connect();
 
-int ftp_mkdir(const int ctrl_fd,const char* dir_name);
-int ftp_rmdir(const int ctrl_fd,const char* dir_name);
-int ftp_cwd(const int ctrl_fd,const char* dir_name);
-int ftp_cdup(const int ctrl_fd,const char* dir_name);
-int ftp_noop(const int ctrl_fd);
-int ftp_syst(const int ctrl_fd);
-int ftp_pwd(const int ctrl_fd);
+int ftp_mkdir(const char* dir_name);
+int ftp_rmdir(const char* dir_name);
+int ftp_cwd(const char* dir_name);
+int ftp_cdup(const char* dir_name);
+int ftp_noop();
+int ftp_syst();
+int ftp_pwd();
 
+int ftp_size_file(const char* file_name);
+int ftp_list(const char* fd_name);
+int ftp_retr_file(const char* file_name);
 
-typedef enum state{
+typedef enum LOGIN_STATE{
 	LOGOUT,
 	LOGIN,
 	PASV_MODE
 }user_state;
+
+typedef struct USRE_INFO{
+	char user[256];
+	char pass[256];
+	user_state login_state;
+	char ip[16];
+	int ctrl_fd;
+	int data_fd;
+	int d_port;
+}user_info;
 
 #endif

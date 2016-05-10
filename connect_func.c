@@ -44,7 +44,6 @@ int read_socket(int sock_fd,char* read_buf,int size)
 	int n=read(sock_fd,read_buf,size-1);
 	if(n==-1){
 		log_console_debug(0,LOG_DEBUG("read socket failed!"));
-		return -1;
 	}
 
 	return n;
