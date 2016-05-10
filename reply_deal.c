@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include "reply_deal.h"
 #include "log_manage.h"
 
@@ -43,4 +44,13 @@ int get_pasv_port(char* reply)
 	char* p2=strtok(NULL," ,.()");
 
 	return atoi(p1)*256+atoi(p2);
+}
+
+int get_reply_code(char* reply)
+{
+	if(strlen(reply)<3){
+		return -1;
+	}
+
+	return (reply[0]-'0')*100+(reply[1]-'0')*10+(reply[2]-'0');
 }

@@ -65,7 +65,7 @@ int ftp_logout(const int ctrl_fd)
 }
 
 //return data port
-int goto_PASV(const int ctrl_fd)
+int goto_pasv_mode(const int ctrl_fd)
 {
 	read_after_write(ctrl_fd,read_buf,READ_BUFSIZE,"PASV\r\n");	
 	if(strncmp(read_buf,PASV_OK,3)!=0){
@@ -105,7 +105,8 @@ int query_login_state()
 	return login_state;
 }
 
-int print_working_dir(const int ctrl_fd)
+//print current working dirtory
+int ftp_pwd(const int ctrl_fd)
 {
 	read_after_write(ctrl_fd,read_buf,READ_BUFSIZE,"PWD\r\n");	
 	if(strncmp(read_buf,PWD_OK,3)!=0){
@@ -118,7 +119,8 @@ int print_working_dir(const int ctrl_fd)
 	return 0;
 }
 
-int print_sysinfo(const int ctrl_fd)
+//print system info
+int ftp_syst(const int ctrl_fd)
 {
 	read_after_write(ctrl_fd,read_buf,READ_BUFSIZE,"SYST\r\n");	
 
@@ -129,6 +131,7 @@ int print_sysinfo(const int ctrl_fd)
 
 	remove_reply_code(read_buf);
 	log_console(2,read_buf);
+	
 	return 0;
 }
 
@@ -137,64 +140,52 @@ int ftp_mkdir(const int ctrl_fd,const char* dir_name)
 	read_after_write(ctrl_fd,read_buf,READ_BUFSIZE,"MKD %s\r\n",dir_name);	
 
 	if(strncmp(read_buf,MKD_OK,3)!=0){
-		log_console_debug(0,LOG_DEB
+		log_console_v(0,"mkdir %s failed!",dir_name);
+		return -1;
+	}
+	
 	return 0;	
 }
 
 int ftp_rmdir(const int ctrl_fd,const char* dir_name)
 {
-	snprintf(write_buf,WRITE_BUF_SIZE,"RMD %s\r\n",dir_name);
-	write_socket(ctrl_fd,write_buf);
-	read_socket(ctrl_fd,read_buf,READ_BUFSIZE);
+	read_after_write(ctrl_fd,read_buf,READ_BUFSIZE,"RMD %s\r\n",dir_name);	
 
 	if(strncmp(read_buf,RMD_OK,3)!=0){
-		log_console_debug(0,LOG_DEBUG(read_buf));
+		log_console_v(0,"RMD %s failed!",dir_name);
 		return -1;
 	}
 
-	remove_reply_code(read_buf);
-	log_console(2,read_buf);
 	return 0;	
 }
 
 int ftp_cwd(const int ctrl_fd,const char* dir_name)
 {
-	snprintf(write_buf,WRITE_BUF_SIZE,"CWD %s\r\n",dir_name);
-	write_socket(ctrl_fd,write_buf);
-	read_socket(ctrl_fd,read_buf,READ_BUFSIZE);
-
-	if(strncmp(read_buf,CWD_OK,3)!=0){
-		log_console_debug(0,LOG_DEBUG(read_buf));
+	int ret=check_reply_code(ctrl_fd,CWD_OK,"CWD %s\r\n",dir_name);	
+	if(ret!=0){
+		log_console_v(0,"change dir to %s failed!",dir_name);
 		return -1;
 	}
 
-	log_console(2,read_buf);
 	return 0;	
 }
 
 int ftp_cdup(const int ctrl_fd,const char* dir_name)
 {
-	snprintf(write_buf,WRITE_BUF_SIZE,"CDUP %s\r\n",dir_name);
-	write_socket(ctrl_fd,write_buf);
-	read_socket(ctrl_fd,read_buf,READ_BUFSIZE);
-
-	if(strncmp(read_buf,CDUP_OK,3)!=0){
-		log_console_debug(0,LOG_DEBUG(read_buf));
+	int ret=check_reply_code(ctrl_fd,CDUP_OK,"CDUP %s\r\n",dir_name);	
+	if(ret!=0){
+		log_console_v(0,"change parent dir to %s failed!",dir_name);
 		return -1;
 	}
 
-	log_console(2,read_buf);
 	return 0;
 }
 
 int ftp_noop(const int ctrl_fd)
 {
-	snprintf(write_buf,WRITE_BUF_SIZE,"NOOP\r\n");
-	write_socket(ctrl_fd,write_buf);
-	read_socket(ctrl_fd,read_buf,READ_BUFSIZE);
-
-	if(strncmp(read_buf,NOOP_OK,3)!=0){
-		log_console_debug(0,LOG_DEBUG(read_buf));
+	int ret=check_reply_code(ctrl_fd,NOOP_OK,"NOOP\r\n");	
+	if(ret!=0){
+		log_console(0,"noop error!");
 		return -1;
 	}
 

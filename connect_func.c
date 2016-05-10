@@ -9,9 +9,7 @@
 #include "log_manage.h"
 
 
-static char read_buf[READ_BUF_SIZE];
-static char write_buf[WRITE_BUF_SIZE];
-
+static char write_buf[WRITE_BUFSIZE];
 
 int init_socket(const char* ip,const int port)
 {
@@ -23,7 +21,7 @@ int init_socket(const char* ip,const int port)
 
 	int ret=connect(sockfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr));
 	if(ret==-1){
-		log_console_v("ERROR:connect to %s:%d failed!",ip,port);
+		log_console_v(0,"connect to %s:%d failed!",ip,port);
 		return -1;
 	}
 	
@@ -34,23 +32,20 @@ int close_socket(int sock_fd)
 {
 	int ret=close(sock_fd);
 	if(ret==-1){
-		log_console_v("ERROR:close %d socket fd dailed!",sock_fd);
+		log_console_v(0,"close %d socket fd dailed!",sock_fd);
 	}
 
 	return ret;
 }
 
-int read_socket(int sock_fd,char* content,int size)
+int read_socket(int sock_fd,char* read_buf,int size)
 {
-	memset(read_buf,0,READ_BUF_SIZE);
-	int n=read(sock_fd,read_buf,READ_BUF_SIZE);
+	memset(read_buf,0,size);
+	int n=read(sock_fd,read_buf,size-1);
 	if(n==-1){
 		log_console_debug(0,LOG_DEBUG("read socket failed!"));
 		return -1;
 	}
-	
-	strncmp(content,read_buf,size-1);
-	content[size]='\0';
 
 	return n;
 }
@@ -59,7 +54,7 @@ int write_socket_v(int sock_fd,const char* format,...)
 {
 	va_list args;
 	va_start(args,format);
-	vsnprintf(write_buf,WRITE_BUF_SIZE,format,args);
+	vsnprintf(write_buf,WRITE_BUFSIZE,format,args);
 	va_end(args);
 
 	int n=write(sock_fd,write_buf,strlen(write_buf)); 
@@ -84,7 +79,7 @@ int read_after_write(int sock_fd,char* read_buf,int read_size,const char* write_
 {
 	va_list args;
 	va_start(args,write_format);	
-	vsnprintf(write_buf,WRITE_BUF_SIZE,format,args);
+	vsnprintf(write_buf,WRITE_BUFSIZE,write_format,args);
 	va_end(args);
 
 	if(write_socket(sock_fd,write_buf)==-1){
@@ -98,8 +93,8 @@ int read_after_write(int sock_fd,char* read_buf,int read_size,const char* write_
 int check_reply_code(int sock_fd,const char* reply_code,const char* format,...)
 {
 	va_list args;
-	va_start(args,write_format);	
-	vsnprintf(write_buf,WRITE_BUF_SIZE,format,args);
+	va_start(args,format);	
+	vsnprintf(write_buf,WRITE_BUFSIZE,format,args);
 	va_end(args);
 
 	if(write_socket(sock_fd,write_buf)==-1){
@@ -112,7 +107,7 @@ int check_reply_code(int sock_fd,const char* reply_code,const char* format,...)
 	}
 	
 	if(strncmp(reply,reply_code,3)!=0){
-		log_console_v(0,"reply code %s not recieved!",reply_code);
+		log_console_v(0,"reply code %s not mtached!",reply_code);
 		return -1;
 	}
 	

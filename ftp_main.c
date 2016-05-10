@@ -12,6 +12,7 @@ int main(int argc,const char* argv[])
 {
 	control_fd=ftp_login(IP,C_PORT,"ftpuser","ftptest");
 	
+
 	ftp_logout(control_fd);
 
 	return 0;

@@ -16,14 +16,14 @@
 #define NOOP_OK "200"
 #define STAT_OK "213"
 
-#define READ_BUFSIZE BUFSIZE
+#define READ_BUFSIZE BUFSIZ
 
 
 int ftp_login(const char* ip,int port,const char* user,const char* pass);
 int ftp_logout(const int sock_fd);
 
 int query_login_state();
-int goto_PASV(const int ctrl_fd);
+int goto_pasv_mode(const int ctrl_fd);
 int open_data_connect(const char* IP,int d_port);
 int close_data_connect(const int data_fd);
 
@@ -32,9 +32,8 @@ int ftp_rmdir(const int ctrl_fd,const char* dir_name);
 int ftp_cwd(const int ctrl_fd,const char* dir_name);
 int ftp_cdup(const int ctrl_fd,const char* dir_name);
 int ftp_noop(const int ctrl_fd);
-
-int print_sysinfo(const int ctrl_fd);
-int print_working_dir(const int ctrl_fd);
+int ftp_syst(const int ctrl_fd);
+int ftp_pwd(const int ctrl_fd);
 
 
 typedef enum state{
