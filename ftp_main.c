@@ -10,8 +10,6 @@ int data_fd;
 
 int main(int argc,const char* argv[])
 {
-int i=10;
-while(i--){
 	control_fd=ftp_login(IP,C_PORT,"ftpuser","ftptest");
 	
 	/*
@@ -28,8 +26,8 @@ while(i--){
 	data_fd=open_data_connect(IP,d_port);
 	close_data_connect(data_fd);
 
+
 	ftp_logout(control_fd);
-}
 	return 0;
 }
 

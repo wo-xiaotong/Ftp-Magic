@@ -1,7 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
-#include "reply_deal.h"
-#include "log_manage.h"
+#include "utils.h"
 
 int remove_reply_code(char* reply)
 {
@@ -27,7 +26,6 @@ int split_list_info(char* reply)
 	char *cp=strtok(reply,"\r\n");
 	while(cp!=NULL){
 		cp=strtok(NULL,"\r\n");
-		printf("%s\n",cp);
 	}
 
 	return 0;

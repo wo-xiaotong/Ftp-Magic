@@ -9,7 +9,7 @@
 #include "connect_func.h"
 #include "log_manage.h"
 #include "ftp_func.h"
-#include "reply_deal.h"
+#include "utils.h"
 
 static char read_buf[READ_BUFSIZE];
 static user_state login_state=LOGOUT;
