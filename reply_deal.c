@@ -52,5 +52,5 @@ int get_reply_code(char* reply)
 		return -1;
 	}
 
-	return (reply[0]-'0')*100+(reply[1]-'0')*10+(reply[2]-'0');
+	return atoi(reply);
 }

@@ -80,9 +80,9 @@ int goto_pasv_mode(const int ctrl_fd)
 	return port;
 }
 
-int open_data_connect(const char* IP,int d_port)
+int open_data_connect(const char* ip,int d_port)
 {
-	int data_fd=init_socket(IP,d_port);
+	int data_fd=init_socket(ip,d_port);
 	if(data_fd!=-1){
 		log_console(2,"open data socket ok!");
 	}
@@ -152,7 +152,7 @@ int ftp_rmdir(const int ctrl_fd,const char* dir_name)
 	read_after_write(ctrl_fd,read_buf,READ_BUFSIZE,"RMD %s\r\n",dir_name);	
 
 	if(strncmp(read_buf,RMD_OK,3)!=0){
-		log_console_v(0,"RMD %s failed!",dir_name);
+		log_console_v(0,"rmdir %s failed!",dir_name);
 		return -1;
 	}
 
