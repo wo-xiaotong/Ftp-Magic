@@ -34,6 +34,7 @@ magic_ftp
 # Debug files
 *.dSYM/
 
-#log file
+#log file/vim temp
 *.log
+*.swp
 tags
