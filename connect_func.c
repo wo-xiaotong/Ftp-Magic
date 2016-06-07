@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <stdarg.h>
+#include <sys/socket.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "connect_func.h"
 #include "log_manage.h"
+#include "utils.h"
 
 
 static char write_buf[WRITE_BUFSIZE];
@@ -106,7 +107,7 @@ int check_reply_code(int sock_fd,const char* reply_code,const char* format,...)
 	}
 	
 	if(strncmp(reply,reply_code,3)!=0){
-		log_console_v(0,"reply code %s not mtached!",reply_code);
+		log_console_v(0,"ret_reply=%d need_reply=%s",get_reply_code(reply),reply_code);
 		return -1;
 	}
 	

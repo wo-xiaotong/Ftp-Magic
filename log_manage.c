@@ -68,7 +68,7 @@ int log_console_debug(int level,int line,const char* file,char* msg)
 int log_console_v(int level,const char* format,...)
 {
 	if(level>2 || level<0)return -1;
-	printf("%s:[",log_level[level]);
+	printf("%s: [",log_level[level]);
 
 	va_list args;
 	va_start(args,format);
@@ -79,4 +79,3 @@ int log_console_v(int level,const char* format,...)
 
 	return n;
 }
-

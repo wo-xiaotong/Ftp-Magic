@@ -6,7 +6,6 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <signal.h>
 
 int main()
 {
@@ -16,32 +15,24 @@ int main()
 	serv_addr.sin_port=htons(9999);
 
 	int server_fd=socket(AF_INET,SOCK_STREAM,0);
-	bind(server_fd,(struct sockaddr*)&serv_addr,sizeof(server_address));
+	bind(server_fd,(struct sockaddr*)&serv_addr,sizeof(serv_addr));
 	listen(server_fd,5);
 
-	signal(SIGCHLD,SIG_IGN);
+	printf("wait for client...\n");
+	struct sockaddr_in client_addr;
+	int c_len=sizeof(client_addr);
+	int client_fd=accept(server_fd,(struct sockaddr*)&client_addr,&c_len);
 	
-	while(1){
-		printf("wait for client...\n");
-		struct sockaddr_in client_address;
-		int client_fd=accept(server_fd,(struct sockaddr*)&client_address,sizeof(client_address));
-		
-		if(fork()==0){
-			//son
-			char ch;
-			sleep(3);
-			read(client_fd,&ch,1);
-			printf("recv info from client:%c\n",ch);
-			close(client_fd);
-			exit(0);
-		}
-		else{
-			//parent 
-			close(client_fd);
-		}
-	}
+	int n=write(client_fd,"hello",5);
+	printf("%d\n",n);
+	n=write(client_fd,"world",6);
+	printf("%d\n",n);
 
-	close(server_fd);
+
+	sleep(5);
+	int c=close(client_fd);
+	int s=close(server_fd);
+	printf("c=%d s=%d",c,s);
 	exit(0);
 }
 

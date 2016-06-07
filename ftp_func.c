@@ -12,7 +12,7 @@
 #include "utils.h"
 
 static char read_buf[READ_BUFSIZE];
-static user_info *ftp_user;
+static user_info *ftp_user=NULL;
 
 int ftp_login(const char* ip,int c_port,const char* user,const char* pass)
 {
@@ -30,7 +30,7 @@ int ftp_login(const char* ip,int c_port,const char* user,const char* pass)
 		log_console_debug(0,LOG_DEBUG("get server name failed!"));
 		return -1;
 	}
-	log_console(2,h_info->h_name);
+	log_console_v(2,"server name:%s",h_info->h_name);
 
 	int u=check_reply_code(ctrl_fd,LOGIN_NEED_PASS,"USER %s\r\n",user);	
 	int p=check_reply_code(ctrl_fd,LOGIN_RIGHT,"PASS %s\r\n",pass);	
@@ -38,17 +38,22 @@ int ftp_login(const char* ip,int c_port,const char* user,const char* pass)
 		log_console_debug(0,LOG_DEBUG("login error"));
 		return -1;
 	}
-	
-	log_console(2,"LOGIN OK");
 
+	log_console(2,"LOGIN OK");
+	
 	ftp_user=(user_info*)malloc(sizeof(user_info));
-	strcpy(ftp_user->user,user);
-	strcpy(ftp_user->pass,pass);
-	strcpy(ftp_user->ip,ip);
+	strncpy(ftp_user->user,user,256);
+	strncpy(ftp_user->pass,pass,256);
+	strncpy(ftp_user->ip,ip,16);
 	ftp_user->ctrl_fd=ctrl_fd;
 	ftp_user->login_state=LOGIN;
 
 	return ctrl_fd;
+}
+
+void ftp_get_user()
+{
+	log_console_v(2,"%s %s %d",ftp_user->user,ftp_user->ip,ftp_user->login_state);
 }
 
 int ftp_logout()
@@ -68,6 +73,7 @@ int ftp_logout()
 		return -1;
 	}
 	
+	free(ftp_user);
 	return 0;
 }
 
@@ -102,8 +108,8 @@ int open_data_connect()
 int close_data_connect()
 {
 	int ret=close_socket(ftp_user->data_fd);
-	if(ret!=-1){
-		log_console(2,"close data socket ok!");
+	if(ret==-1){
+		log_console(0,"close data socket error!");
 	}else{
 		ftp_user->login_state=LOGIN;
 	}
@@ -148,25 +154,23 @@ int ftp_syst()
 
 int ftp_mkdir(const char* dir_name)
 {
-	read_after_write(ftp_user->ctrl_fd,read_buf,READ_BUFSIZE,"MKD %s\r\n",dir_name);	
-
-	if(strncmp(read_buf,MKD_OK,3)!=0){
+	int ret=check_reply_code(ftp_user->ctrl_fd,MKD_OK,"MKD %s\r\n",dir_name);
+	if(ret!=0){
 		log_console_v(0,"mkdir %s failed!",dir_name);
-		return -1;
 	}
 	
+	log_console_v(0,"mkdir %s ok!",dir_name);
 	return 0;	
 }
 
 int ftp_rmdir(const char* dir_name)
 {
-	read_after_write(ftp_user->ctrl_fd,read_buf,READ_BUFSIZE,"RMD %s\r\n",dir_name);	
-
-	if(strncmp(read_buf,RMD_OK,3)!=0){
+	int ret=check_reply_code(ftp_user->ctrl_fd,RMD_OK,"RMD %s\r\n",dir_name);
+	if(ret!=0){
 		log_console_v(0,"rmdir %s failed!",dir_name);
-		return -1;
 	}
-
+	
+	log_console_v(0,"rmdir %s ok!",dir_name);
 	return 0;	
 }
 
@@ -177,19 +181,9 @@ int ftp_cwd(const char* dir_name)
 		log_console_v(0,"change dir to %s failed!",dir_name);
 		return -1;
 	}
-
+	
+	log_console_v(2,"change dir to %s ok",dir_name);
 	return 0;	
-}
-
-int ftp_cdup(const char* dir_name)
-{
-	int ret=check_reply_code(ftp_user->ctrl_fd,CDUP_OK,"CDUP %s\r\n",dir_name);	
-	if(ret!=0){
-		log_console_v(0,"change parent dir to %s failed!",dir_name);
-		return -1;
-	}
-
-	return 0;
 }
 
 int ftp_noop()
@@ -199,7 +193,8 @@ int ftp_noop()
 		log_console(0,"noop error!");
 		return -1;
 	}
-
+	
+	log_console(2,"noop ok!");
 	return 0;
 }
 
@@ -207,7 +202,6 @@ int ftp_noop()
 int ftp_size_file(const char* file_name)
 {
 	read_after_write(ftp_user->ctrl_fd,read_buf,READ_BUFSIZE,"SIZE %s\r\n",file_name);
-
 	if(compare_reply_code(read_buf,SIZE_OK)!=0){
 		return -1;
 	}
@@ -220,13 +214,24 @@ int ftp_list(const char* df_name)
 {
 	if(ftp_user->login_state!=PASV_MODE){
 		goto_pasv_mode(ftp_user->ctrl_fd);
-		open_data_connect();
 	}
 
-	read_after_write(ftp_user->ctrl_fd,read_buf,READ_BUFSIZE,"LIST %s\r\n",df_name);
-	log_console(2,read_buf);
-	close_data_connect();
+	if(open_data_connect()==-1){
+		return -1;
+	}
 
+	if(check_reply_code(ftp_user->ctrl_fd,LIST_OK,"LIST %s\r\n",df_name)==-1){
+		return -1;
+	}
+
+	read_socket(ftp_user->data_fd,read_buf,READ_BUFSIZE);
+	split_list_info(read_buf);
+	close_data_connect();
+	
+	read_socket(ftp_user->ctrl_fd,read_buf,READ_BUFSIZE);
+	if(compare_reply_code(read_buf,LIST_OVER)){
+		return -1;
+	}
 	return 0;
 }
 

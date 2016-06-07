@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
 
@@ -26,6 +27,7 @@ int split_list_info(char* reply)
 {
 	char *cp=strtok(reply,"\r\n");
 	while(cp!=NULL){
+		printf("%s\n",cp);
 		cp=strtok(NULL,"\r\n");
 	}
 
@@ -62,4 +64,3 @@ int get_reply_code(char* reply)
 
 	return atoi(reply);
 }
-

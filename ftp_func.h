@@ -14,7 +14,8 @@
 #define CWD_OK "250"
 #define CDUP_OK "250"
 #define NOOP_OK "200"
-#define STAT_OK "213"
+#define LIST_OK "150"
+#define LIST_OVER "226"
 #define SIZE_OK "213"
 
 #define READ_BUFSIZE BUFSIZ
@@ -22,6 +23,7 @@
 
 int ftp_login(const char* ip,int port,const char* user,const char* pass);
 int ftp_logout();
+void ftp_get_user();
 
 int query_login_state();
 int goto_pasv_mode();
@@ -31,7 +33,6 @@ int close_data_connect();
 int ftp_mkdir(const char* dir_name);
 int ftp_rmdir(const char* dir_name);
 int ftp_cwd(const char* dir_name);
-int ftp_cdup(const char* dir_name);
 int ftp_noop();
 int ftp_syst();
 int ftp_pwd();
@@ -55,5 +56,9 @@ typedef struct USRE_INFO{
 	int data_fd;
 	int d_port;
 }user_info;
+
+typedef struct DIR_LIST{
+	char info[10];
+}dir_list;
 
 #endif
