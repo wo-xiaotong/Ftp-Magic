@@ -17,6 +17,7 @@
 #define LIST_OK "150"
 #define LIST_OVER "226"
 #define SIZE_OK "213"
+#define DELE_OK "250"
 
 #define READ_BUFSIZE BUFSIZ
 
@@ -24,8 +25,8 @@
 int ftp_login(const char* ip,int port,const char* user,const char* pass);
 int ftp_logout();
 void ftp_get_user();
+int ftp_check_connect();
 
-int query_login_state();
 int goto_pasv_mode();
 int open_data_connect();
 int close_data_connect();
@@ -36,8 +37,8 @@ int ftp_cwd(const char* dir_name);
 int ftp_noop();
 int ftp_syst();
 int ftp_pwd();
+int ftp_delete_file(const char* file_name);
 
-int ftp_size_file(const char* file_name);
 int ftp_list(const char* fd_name);
 int ftp_retr_file(const char* file_name);
 

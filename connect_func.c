@@ -107,7 +107,6 @@ int check_reply_code(int sock_fd,const char* reply_code,const char* format,...)
 	}
 	
 	if(strncmp(reply,reply_code,3)!=0){
-		log_console_v(0,"ret_reply=%d need_reply=%s",get_reply_code(reply),reply_code);
 		return -1;
 	}
 	

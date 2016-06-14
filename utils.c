@@ -64,3 +64,14 @@ int get_reply_code(char* reply)
 
 	return atoi(reply);
 }
+
+void remove_space(char* para)
+{
+	int len=strlen(para);
+	int not_space=0;
+	for(;para[not_space]==' ' && not_space<len;++not_space);
+	
+	for(int i=0;not_space<len+1;){
+		para[i++]=para[not_space++];
+	}
+}

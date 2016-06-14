@@ -20,11 +20,15 @@ int main()
 		exit(-1);
 	}
 
-	char ch[128];
-	int n=read(server_fd,ch,128);
-	printf("%d %s\n",n,ch);
-	n=read(server_fd,ch,128);
-	printf("%d %s\n",n,ch);
+	while(1){
+		char ch[128];
+		int n=read(server_fd,ch,128);
+		printf("n=%d ch=%s\n",n,ch);
+		
+		int ret=write(server_fd,ch,strlen(ch));
+		printf("ret=%d,ch=%s\n",ret,ch);
+	}
+	
 
 	int c=close(server_fd);
 	printf("c=%d\n",c);

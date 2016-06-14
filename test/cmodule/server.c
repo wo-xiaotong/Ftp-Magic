@@ -24,13 +24,12 @@ int main()
 	int client_fd=accept(server_fd,(struct sockaddr*)&client_addr,&c_len);
 	
 	int n=write(client_fd,"hello",5);
-	printf("%d\n",n);
-	n=write(client_fd,"world",6);
-	printf("%d\n",n);
 
-
-	sleep(5);
+	printf("send hello over..\n");
+	sleep(2);
 	int c=close(client_fd);
+	
+	while(1);
 	int s=close(server_fd);
 	printf("c=%d s=%d",c,s);
 	exit(0);
