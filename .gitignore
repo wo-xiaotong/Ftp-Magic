@@ -37,4 +37,4 @@ magic_ftp
 #log file/vim temp
 *.log
 *.swp
-tags
+*tags

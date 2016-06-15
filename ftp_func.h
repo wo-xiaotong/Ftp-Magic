@@ -18,6 +18,10 @@
 #define LIST_OVER "226"
 #define SIZE_OK "213"
 #define DELE_OK "250"
+#define RETR_OK "150"
+#define RETR_OVER "226"
+#define STOR_OK "150"
+#define STOR_OVER "226"
 
 #define READ_BUFSIZE BUFSIZ
 
@@ -25,41 +29,31 @@
 int ftp_login(const char* ip,int port,const char* user,const char* pass);
 int ftp_logout();
 void ftp_get_user();
-int ftp_check_connect();
-
-int goto_pasv_mode();
-int open_data_connect();
-int close_data_connect();
+void ftp_check_connect();
 
 int ftp_mkdir(const char* dir_name);
 int ftp_rmdir(const char* dir_name);
 int ftp_cwd(const char* dir_name);
 int ftp_noop();
 int ftp_syst();
-int ftp_pwd();
+int ftp_pwd(char* path,int size);
 int ftp_delete_file(const char* file_name);
 
 int ftp_list(const char* fd_name);
 int ftp_retr_file(const char* file_name);
-
-typedef enum LOGIN_STATE{
-	LOGOUT,
-	LOGIN,
-	PASV_MODE
-}user_state;
+int ftp_stor_file(const char* file_name);
 
 typedef struct USRE_INFO{
 	char user[256];
 	char pass[256];
-	user_state login_state;
 	char ip[16];
 	int ctrl_fd;
-	int data_fd;
-	int d_port;
+	int c_port;
 }user_info;
 
-typedef struct DIR_LIST{
-	char info[10];
-}dir_list;
+typedef struct FILE_INFO{
+	char type;
+	char name[256];
+}file_info;
 
 #endif

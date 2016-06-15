@@ -2,6 +2,7 @@
 
 int main()
 {
+	printf("%d\n",strncmp("1","12",1));
 
 	char c[256];
 	while(1){

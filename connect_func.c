@@ -59,7 +59,7 @@ int write_socket_v(int sock_fd,const char* format,...)
 
 	int n=write(sock_fd,write_buf,strlen(write_buf)); 
 	if(n==-1){
-		log_console_debug(0,LOG_DEBUG("write socket failed!"));
+		log_console_debug(0,LOG_DEBUG("write socket v failed!"));
 	}
 
 	return n;
@@ -69,7 +69,18 @@ int write_socket(int sock_fd,char* write_buf)
 {
 	int n=write(sock_fd,write_buf,strlen(write_buf)); 
 	if(n==-1){
-		log_console_debug(0,LOG_DEBUG("write socket failed!"));
+		log_console_debug(0,LOG_DEBUG("write socket a failed!"));
+	}
+
+	return n;
+}
+
+//write as binary
+int write_socket_b(int sock_fd,char* write_buf,int size)
+{
+	int n=write(sock_fd,write_buf,size); 
+	if(n==-1){
+		log_console_debug(0,LOG_DEBUG("write socket b failed!"));
 	}
 
 	return n;
