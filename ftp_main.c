@@ -62,6 +62,7 @@ int main(int argc, const char* argv[])
 	int loop = 1;
 	char path[1024]="/";
 	while (loop) {
+		ftp_check_connect();
 		ftp_pwd(path,sizeof(path));
 		printf("%s> ",path);
 		char order[256];
@@ -87,7 +88,6 @@ int main(int argc, const char* argv[])
 		case -2: break;
 		default: log_console(0,"bad order!"); break;
 		}
-		ftp_check_connect();
 	}
 
 	ftp_logout();

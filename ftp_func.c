@@ -71,7 +71,7 @@ void ftp_get_user()
 void ftp_check_connect()
 {
 	int ret=check_reply_code(ftp_user->ctrl_fd,NOOP_OK,"NOOP\r\n");	
-	if(ret==0)ftp_login(ftp_user->ip,ftp_user->c_port,ftp_user->user,ftp_user->pass);
+	if(ret!=0)ftp_login(ftp_user->ip,ftp_user->c_port,ftp_user->user,ftp_user->pass);
 }
 
 int ftp_logout()
@@ -275,7 +275,7 @@ int ftp_stor_file(const char* file_name)
 		while(1){
 			int cnt=fread(file_buf,sizeof(char),READ_BUFSIZE,fp);
 			if(cnt==0)break;
-			write_socket_b(ftp_user->ctrl_fd,file_buf,cnt);
+			write_socket_b(data_fd,file_buf,cnt);
 		}
 		fclose(fp);
 	}
