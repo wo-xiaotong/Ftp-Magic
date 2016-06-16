@@ -41,7 +41,7 @@ int ftp_login(const char* ip,int c_port,const char* user,const char* pass)
 	int u=check_reply_code(ctrl_fd,LOGIN_NEED_PASS,"USER %s\r\n",user);	
 	int p=check_reply_code(ctrl_fd,LOGIN_RIGHT,"PASS %s\r\n",pass);	
 	if(u!=0 || p!=0){
-		log_console_debug(0,LOG_DEBUG("login error"));
+		log_console_debug(0,LOG_DEBUG("check your username or pass"));
 		return -1;
 	}
 	
@@ -256,6 +256,11 @@ int ftp_retr_file(const char* file_name)
 
 int ftp_stor_file(const char* file_name)
 {
+	FILE *fp=fopen(file_name,"rb");
+	if(fp==NULL){
+		log_console_v(0,"%s is not exists",file_name);
+		return -1;
+	}
 
 	int d_port=goto_pasv_mode(ftp_user->ctrl_fd);
 	int data_fd=-1;
@@ -269,16 +274,14 @@ int ftp_stor_file(const char* file_name)
 		return -1;
 	}
 	
-	FILE *fp=fopen(file_name,"rb");
-	if(fp!=NULL){
-		char file_buf[READ_BUFSIZE];
-		while(1){
-			int cnt=fread(file_buf,sizeof(char),READ_BUFSIZE,fp);
-			if(cnt==0)break;
-			write_socket_b(data_fd,file_buf,cnt);
-		}
-		fclose(fp);
+	char file_buf[READ_BUFSIZE];
+	while(1){
+		int cnt=fread(file_buf,sizeof(char),READ_BUFSIZE,fp);
+		if(cnt==0)break;
+		write_socket_b(data_fd,file_buf,cnt);
 	}
+	fclose(fp);
+	
 	close_socket(data_fd);
 
 	read_socket(ftp_user->ctrl_fd,read_buf,READ_BUFSIZE);

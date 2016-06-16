@@ -4,13 +4,14 @@
 
 int main()
 {
-/*	FILE *fp=fopen("hello/1","w");
+	FILE *fp=fopen("1.txt","rb");
 	if(fp==NULL){
 		printf("null fp\n");
 		return ;
 	}
 	fclose(fp);
-*/
-	printf("%d\n",mkdir("1/2",S_IRUSR|S_IWUSR));
+
+//	printf("%d\n",mkdir("1/2",S_IRUSR|S_IWUSR));
+	
 	return 0;
 }
