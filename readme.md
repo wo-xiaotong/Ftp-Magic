@@ -1,6 +1,4 @@
-this is a test ftp client 
-
-compile envir:  
+compile environment:  
 	ubuntu 14.04  
 	gcc4.8.4  
 
